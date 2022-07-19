@@ -1,0 +1,114 @@
+# PyCharm displays the output of running module using the output console.
+# In order for terminal commands under os.system() --clear screen function-- to work,
+# please emulate your terminal inside the output console.
+#
+# Select 'Edit Configurations' from the 'Run' menu.
+# Under the 'Execution' section, select 'Emulate terminal in output console'
+
+import os
+
+
+def game_board(game_values):
+    # Printing Board By using gameValues 's List
+    print("TIC-TAC-TOE\n")
+    print(f" {game_values[0]} | {game_values[1]} | {game_values[2]} ")
+    print(f"---|---|---")
+    print(f" {game_values[3]} | {game_values[4]} | {game_values[5]} ")
+    print(f"---|---|---")
+    print(f" {game_values[6]} | {game_values[7]} | {game_values[8]} ")
+
+
+def error():
+    # exception if entered value is other than numbers between 0 and 8
+    # therefore in this code IndexError and ValueError can have same error message.
+    os.system('CLS')
+    print("\nOops!! Please Enter NUMBERS BETWEEN 0 and 8\n")
+
+def rule():
+    print("\nEMPTY locations at the GAME BOARD are specified by numbers from 0 to 8.")
+    print("RULE 1 : One location in the game board can be filled by one player only.")
+    print("RULE 2 : Always choose an EMPTY location.\n")
+
+def checkWin(game_values):
+    # All Winning Patterns
+    wins = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
+
+    for win in wins:
+        # if gameValues matches with the pattern and has X then X won the Match
+        if game_values[win[0]] == game_values[win[1]] == game_values[win[2]] == 'X':
+            game_board(game_values)
+            print("\nX WON the match")
+            return 1  # NOTE : Don't use break here
+
+        # if gameValues matches with the pattern and has X then O won the Match
+        if game_values[win[0]] == game_values[win[1]] == game_values[win[2]] == 'o':
+            game_board(game_values)
+            print("\no WON the match")
+            return 0
+
+        # if all places are filled and no one is the winner
+        if all(isinstance(item, str) for item in game_values):
+            game_board(game_values)
+            return -2
+    # return -1 if no one wins
+    return -1
+
+
+if __name__ == '__main__':
+    rule()
+    print("Welcome to")
+    game_values = list(range(9))
+    turn = 1
+
+    while True:
+        try:
+            if turn == 1:
+                game_board(game_values)
+                print("\nChoose an EMPTY location")
+                value = int(input("\nX's Turn: "))
+
+                # check if already filled with O
+                if game_values[value] != 'o':
+                    game_values[value] = 'X'
+                else:
+                    os.system('CLS')
+                    print("oops!!! Location", value, "already FILLED by o\n")
+                    print("\nPlease choose an empty location\n")
+                    continue
+                os.system('CLS')
+
+            if turn == 0:
+                game_board(game_values)
+                print("\nChoose an EMPTY location")
+                value = int(input("\no's Turn: "))
+
+                # check if already filled with X
+                if game_values[value] != 'X':
+                    game_values[value] = 'o'
+                else:
+                    os.system('CLS')
+                    print("\noops!!! Location", value, "already FILLED by X\n")
+                    print("\nPlease choose an empty location\n")
+                    continue
+                os.system('CLS')
+
+        except IndexError:
+            error()
+            continue
+
+        except ValueError:
+            error()
+            continue
+
+        # for giving chance to other player
+        turn = 1-turn
+
+        result = checkWin(game_values)
+        # Game Draw
+        if result == -2:
+            print("its a DRAW!!!")
+            break
+        # Match Over
+        if result != -1:
+            print("\nGAME OVER!!!")
+            break
